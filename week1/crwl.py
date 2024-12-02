@@ -16,4 +16,3 @@ while agenda:
         print(r.headers)
         soup = BeautifulSoup(r.content, 'html.parser')
         print(soup.find_all('a'))
-        
