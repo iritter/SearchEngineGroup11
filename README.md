@@ -1,8 +1,8 @@
 # SearchEngineGroup11
 
-# 🌍 **Country Guessing Game**  
+# 🔎 **Search Engine**  
 
-Welcome to our **Search Engine**,  ✨  
+Welcome to our **Search Engine**,  🔎✨  
 You can access the browser via the following url: ""
 
 ---
@@ -18,7 +18,7 @@ You can access the browser via the following url: ""
 
 ---
 
-## 🚀 **Features**
+## ⚡ **Features**
 ---
 
 ## 🎮 **Gameplay Flow**
@@ -94,7 +94,7 @@ SearchEngine/
 ---
 
 ## 🌟 **Enjoy the Game!**  
-We hope you enjoyed using our **Search Engine**! 🌍🎉
+We hope you enjoyed using our **Search Engine**! 🔎🎉
 
 ### 📝 **Attribution**
 Created with ❤️ by Group 11: Johanna, Christina & Isabel.
