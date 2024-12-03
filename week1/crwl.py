@@ -30,7 +30,6 @@ def crawl_and_index(initial_url, max_depth):
     
 
     while agenda:
-        #logging.info(f"visited BEFORE pop: {visited}")
 
         logging.info(f"Agenda: {agenda}") 
         
