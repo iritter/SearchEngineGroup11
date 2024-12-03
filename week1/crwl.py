@@ -8,7 +8,7 @@ from collections import defaultdict
 # Set up logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-def crawl_and_index(initial_url, max_depth=4):
+def crawl_and_index(initial_url, max_depth):
     """
     Crawl a website and build an in-memory index of words to URLs, 
     as well as storing words for each individual URL.
@@ -27,13 +27,20 @@ def crawl_and_index(initial_url, max_depth=4):
     word_to_urls = defaultdict(set)  # Word-to-URLs index
     url_to_words = {}  # url-to-words-mapping
     all_words = set()  
+    
 
     while agenda:
+        #logging.info(f"visited BEFORE pop: {visited}")
+
+        logging.info(f"Agenda: {agenda}") 
+        
         url, depth = agenda.pop()  # get next url and its depth
+
         if url in visited or depth > max_depth:  # skip if visited or depth exceeded
             continue
 
         logging.info(f"Crawling: {url}, Current Depth: {depth}")  
+        
 
         try:
             response = requests.get(url) 
@@ -61,7 +68,7 @@ def crawl_and_index(initial_url, max_depth=4):
                     href = link['href']
                     absolute_url = urljoin(url, href)  # resolve relative URLs
                     # enqueue the URL if it's within the same domain and not visited
-                    if absolute_url.startswith(base_url) and absolute_url not in visited:
+                    if absolute_url.startswith(base_url) and absolute_url not in visited and all(absolute_url != url[0] for url in agenda):
                         agenda.append((absolute_url, depth + 1))  # Increase depth by 1
 
             else:
@@ -96,7 +103,7 @@ if __name__ == "__main__":
     # initial url, url to be crawled
     initial_url = 'https://vm009.rz.uos.de/crawl/index.html'
 
-    word_to_urls, url_to_words, all_words = crawl_and_index(initial_url, max_depth=3)
+    word_to_urls, url_to_words, all_words = crawl_and_index(initial_url, max_depth=4)
     logging.info(f"Indexing complete. Indexed {len(word_to_urls)} unique words.")
     
     # print out the unique words per page
@@ -109,7 +116,7 @@ if __name__ == "__main__":
         logging.info(f"Unique words on {url}: {unique_words_count}")
     
     # example of searching for multiple words
-    search_words = ['world', 'pixels']
+    search_words = ['symbol', 'virgin', 'grace']
     result = search(word_to_urls, search_words)
 
     logging.info(f"Found {len(result)} URLs that contain all search words.")
