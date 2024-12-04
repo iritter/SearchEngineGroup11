@@ -5,79 +5,89 @@ import logging
 import re
 from collections import defaultdict
 
-# Set up logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-def crawl_and_index(initial_url, max_depth):
-    """
-    Crawl a website and build an in-memory index of words to URLs, 
-    as well as storing words for each individual URL.
+def cook(soup_text):
+    """tokenize the page's content using BeautifulSoup tool"""
+    soup_text = soup_text.get_text(separator=' ')
+    # FRAGE: 
+    # Falls wir keine Zahlen dabei haben wollen?!
+    #soup_is_ready = [word for word in re.findall(r'\b\w+\b', soup_text.lower()) if not word.isdigit()]
+    soup_is_ready = re.findall(r'\b\w+\b', soup_text.lower())
+    return soup_is_ready
 
+
+def process_query(query):
+    """ 
+    Für die Query word können wir auch Tokenization, lemmization und so einfügen, 
+    damit die suche besser wird, würde ich aber erst ganz am Ende machen, also in 2 wochen - je nachdem was
+    wir noch so machen... und dann hier in die function!!!
+    """
+    return query.lower()
+
+def index(url, word_to_urls, url_to_words, all_words):
+
+    """
+    Build an in-memory index of words to URLs, and extract the words for a URL.
+    :param url: URL for which index shall be generated
+    :word_to urls: list of URLS
+    :url_to_words mapping: list of words on a page
+    :all_words: total set of unique words across all pages
+    """
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    words = cook(soup)
+    url_to_words[url] = words
+    all_words.update(words)
+    for word in set(words):
+        word_to_urls[word].add(url)
+    
+    return soup
+
+def crawl(initial_url):
+
+    """
+    Crawl a website and build index function, and store the words for each individual URL.
+    
     :param initial_url: URL to start crawling from.
-    :param max_depth: Maximum depth to crawl.
-    :return: Tuple of two dictionaries:
+    :return: Tuple of two dictionaries
              - word-to-URLs index (word -> list of URLs)
              - URL-to-words mapping (URL -> list of words)
              - total set of unique words across all pages
     """
 
-    visited = set()  # track visited urls 
-    agenda = [(initial_url, 0)]  # store urls and their depth
-    base_url = "{uri.scheme}://{uri.netloc}".format(uri=urlparse(initial_url))  # initial url
-    word_to_urls = defaultdict(set)  # Word-to-URLs index
-    url_to_words = {}  # url-to-words-mapping
-    all_words = set()  
-    
+    visited = set()
+    agenda = [initial_url]
+    base_url = "{uri.scheme}://{uri.netloc}".format(uri=urlparse(initial_url))
+    word_to_urls = defaultdict(set)
+    url_to_words = {}
+    all_words = set()
 
     while agenda:
-
-        logging.info(f"Agenda: {agenda}") 
-        
-        url, depth = agenda.pop()  # get next url and its depth
-
-        if url in visited or depth > max_depth:  # skip if visited or depth exceeded
+        url = agenda.pop() # get next url
+        if url in visited: # crawl if not visited yet
             continue
 
-        logging.info(f"Crawling: {url}, Current Depth: {depth}")  
-        
-
+        visited.add(url) # mark as visited
         try:
-            response = requests.get(url) 
-
+            response = requests.get(url)
             if response.status_code == 200 and 'text/html' in response.headers.get('Content-Type', ''):
-                logging.info(f"Processing: {url}, Depth: {depth}")  # successful processing
-                visited.add(url)  # mark url/page as visited
+                # create index and extract page content (=soup)
+                soup = index(response, url, word_to_urls, url_to_words, all_words)
 
-                # parse the page content with BeautifulSoup
-                soup = BeautifulSoup(response.content, 'html.parser')
-                
-                # extract text, remove punctuation and convert to lower 
-                text = soup.get_text(separator=' ')  
-                words = re.findall(r'\b\w+\b', text.lower()) 
+                for link in soup.find_all('a', href=True): # get all links on that page
+                    absolute_url = urljoin(url, link['href'])
+                    # if it fulfills the requirements and is not yet visited
+                    if absolute_url.startswith(base_url) and absolute_url not in visited:
+                        agenda.append(absolute_url) # append it to the agenda
 
-                url_to_words[url] = set(words)  # store unique words for this page in a set
-                all_words.update(words) # total number of unique words across all pages
-
-                # update word-to-URLs index
-                for word in words:
-                    word_to_urls[word].add(url)
-
-                # enqueue linked urls
-                for link in soup.find_all('a', href=True):
-                    href = link['href']
-                    absolute_url = urljoin(url, href)  # resolve relative URLs
-                    # enqueue the URL if it's within the same domain and not visited
-                    if absolute_url.startswith(base_url) and absolute_url not in visited and all(absolute_url != url[0] for url in agenda):
-                        agenda.append((absolute_url, depth + 1))  # Increase depth by 1
-
-            else:
-                logging.warning(f"Skipping non-HTML or failed response for: {url}")  # skipped url
         except requests.RequestException as e:
-            logging.error(f"Failed to fetch: {url} Error: {e}")  # fetch failure
+            logging.error(f"Failed to fetch: {url} Error: {e}")
 
-    # convert sets to lists
+    # return the words ad lists and number of uniqe words
     word_to_urls = {word: list(urls) for word, urls in word_to_urls.items()}
     return word_to_urls, url_to_words, all_words
+
 
 def search(index, words):
     """
@@ -98,11 +108,13 @@ def search(index, words):
 
     return list(result_urls)
 
+
+#### DEF MAIN
 if __name__ == "__main__":
     # initial url, url to be crawled
     initial_url = 'https://vm009.rz.uos.de/crawl/index.html'
 
-    word_to_urls, url_to_words, all_words = crawl_and_index(initial_url, max_depth=4)
+    word_to_urls, url_to_words, all_words = crawl(initial_url)
     logging.info(f"Indexing complete. Indexed {len(word_to_urls)} unique words.")
     
     # print out the unique words per page
