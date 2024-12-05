@@ -73,7 +73,7 @@ def crawl(initial_url):
             response = requests.get(url)
             if response.status_code == 200 and 'text/html' in response.headers.get('Content-Type', ''):
                 # create index and extract page content (=soup)
-                soup = index(response, url, word_to_urls, url_to_words, all_words)
+                soup = index(url, word_to_urls, url_to_words, all_words)
 
                 for link in soup.find_all('a', href=True): # get all links on that page
                     absolute_url = urljoin(url, link['href'])
