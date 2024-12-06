@@ -6,6 +6,12 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 import logging
+from nltk.stem import PorterStemmer
+from nltk.stem import WordNetLemmatizer
+
+# Initialize stemmer and lemmatizer
+stemmer = PorterStemmer()
+lemmatizer = WordNetLemmatizer()
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -26,12 +32,6 @@ def add_to_index(writer, url, title, content):
     """
     writer.add_document(url=url, title=title, content=content)
 
-from nltk.stem import PorterStemmer
-from nltk.stem import WordNetLemmatizer
-
-# Initialize stemmer and lemmatizer
-stemmer = PorterStemmer()
-lemmatizer = WordNetLemmatizer()
 
 def process_search_query(query_words, use_stemming=False, use_lemmatization=False):
     """
