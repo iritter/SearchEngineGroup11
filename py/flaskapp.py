@@ -9,14 +9,6 @@ template_dir = os.path.join(current_dir, "../templates")  #navigate to templates
 
 app = Flask(__name__, template_folder=template_dir)
 
-"""
-# exemplatory search index
-search_index = {
-    "python": ["https://www.python.org/", "https://docs.python.org/3/"],
-    "flask": ["https://flask.palletsprojects.com/", "https://realpython.com/tutorials/flask/"],
-    "web development": ["https://developer.mozilla.org/en-US/docs/Learn", "https://www.w3schools.com/"]
-}"""
-
 # Open the Whoosh index
 search_index = open_dir("indexdir")
 
@@ -37,8 +29,6 @@ def home():
     # render a search fomr
     return render_template('home.html')
 
-
-# search results
 @app.route("/search", methods=['GET'])
 def search():
     """
@@ -55,9 +45,8 @@ def search():
             parsed_query = qp.parse(query)
             whoosh_results = searcher.search(parsed_query)
 
-            # Collect results
-            for r in whoosh_results:
-                results.append({"url": r["url"], "title": r["title"]})
+            # Collect only the URLs
+            results = [r["url"] for r in whoosh_results]
 
     return render_template('search.html', query=query, results=results)
 

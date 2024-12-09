@@ -120,6 +120,7 @@ def crawl(initial_url):
                 if response.status_code == 200 and 'text/html' in response.headers.get('Content-Type', ''):
                     # create index and extract page content (=soup)
                     soup = index(url, word_to_urls, url_to_words, all_words)
+
                     title = soup.title.string if soup.title else "No title"
                     content = soup.get_text(separator=' ')  # Get the textual content of the page
                     
@@ -157,33 +158,6 @@ def search(index, words):
         result_urls &= set(index.get(word, []))  # set intersection
 
     return list(result_urls)
-
-"""
-#### DEF MAIN
-if __name__ == "__main__":
-    # initial url, url to be crawled
-    initial_url = 'https://vm009.rz.uos.de/crawl/index.html'
-
-    word_to_urls, url_to_words, all_words = crawl(initial_url)
-    #logging.info(f"Indexing complete. Indexed {len(word_to_urls)} unique words.")
-    
-    # print out the unique words per page
-    total_unique_words_count = len(all_words)  # number of total unique words across all pages
-    #logging.info(f"Total unique words across all pages: {total_unique_words_count}")
-    
-    for url, words in url_to_words.items():
-        unique_words_count = len(words)  # Count unique words on that page
-        #logging.info(f"Words found on {url}: {words}")
-        #logging.info(f"Unique words on {url}: {unique_words_count}")
-    
-    # example of searching for multiple words
-    #search_words = ['symbol', 'virgin']
-    #result = search(word_to_urls, search_words)
-    result = perform_search("symbol virgin")
-    print(result)
-    #logging.info(f"Found {len(result)} URLs that contain all search words.")
-    for url in result:  # display the found urls
-        print(url)"""
 
 if __name__ == "__main__":
     # initial url, url to be crawled
