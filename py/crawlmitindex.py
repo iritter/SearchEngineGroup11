@@ -7,6 +7,8 @@ from urllib.parse import urljoin, urlparse
 import logging
 import re
 from collections import defaultdict
+from nltk.stem import PorterStemmer
+from nltk.stem import WordNetLemmatizer
 
 
 # Define the schema for the index
@@ -53,21 +55,38 @@ def perform_search(q_words):
 
 def cook(soup_text):
     """tokenize the page's content using BeautifulSoup tool"""
+
+    
     soup_text = soup_text.get_text(separator=' ')
+
     # FRAGE: 
     # Falls wir keine Zahlen dabei haben wollen?!
     #soup_is_ready = [word for word in re.findall(r'\b\w+\b', soup_text.lower()) if not word.isdigit()]
     soup_is_ready = re.findall(r'\b\w+\b', soup_text.lower())
     return soup_is_ready
 
+# Initialize stemmer and lemmatizer
+stemmer = PorterStemmer()
+lemmatizer = WordNetLemmatizer()
 
-def process_query(query):
+
+def process_query(query, use_stemming=False, use_lemmatization=False):
     """ 
     Für die Query word können wir auch Tokenization, lemmization und so einfügen, 
     damit die suche besser wird, würde ich aber erst ganz am Ende machen, also in 2 wochen - je nachdem was
     wir noch so machen... und dann hier in die function!!!
+    Applying stemming and/or lemmatization.
     """
-    return query.lower()
+    processed_words = []
+    for word in query:
+        if use_stemming:
+            processed_words.append(stemmer.stem(word))
+        elif use_lemmatization:
+            processed_words.append(lemmatizer.lemmatize(word))
+        else:
+            processed_words.append(word)
+    return processed_words
+
 
 def index(url, word_to_urls, url_to_words, all_words):
 
@@ -151,10 +170,13 @@ def search(index, words):
     if not words:
         return []
 
+    # Process the query word
+    word = process_query(words[0], use_stemming=True, use_lemmatization=True)
     result_urls = set(index.get(words[0], []))  # get urls for the first word
 
     # intersect with urlss for each subsequent word
     for word in words[1:]:
+        word = process_query(word, use_stemming=True, use_lemmatization=True)
         result_urls &= set(index.get(word, []))  # set intersection
 
     return list(result_urls)
