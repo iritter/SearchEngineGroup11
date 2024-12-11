@@ -33,15 +33,21 @@ def index(url, word_to_urls, url_to_words, all_words):
     :word_to urls: list of URLS
     :url_to_words mapping: list of words on a page
     :all_words: total set of unique words across all pages
+    :return: soup object
     """
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
+
+    # paragraphs = soup.find_all('p')
+    # content = " ".join(p.get_text(separator=" ", strip=True) for p in paragraphs)
+
     words = cook(soup)
     url_to_words[url] = words
     all_words.update(words)
+
     for word in set(words):
         word_to_urls[word].add(url)
-    
+
     return soup
 
 def crawl(initial_url):

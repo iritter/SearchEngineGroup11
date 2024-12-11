@@ -1,22 +1,25 @@
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Results</title>
-</head>
-<body>
-    <h1>Search Results for "{{ query }}"</h1>
-    {% if results %}
-        <ul>
-        {% for url in results %}
-            <li><a href="{{ url }}" target="_blank">{{ url }}</a></li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>No results found for "{{ query }}"</p>
-    {% endif %}
-    <a href="/home">Back to search</a>
-</body>
-</html>
+{% block content %}
+{% set num_results = results | length %}
+
+<h1>Search Results for "{{ query }}"</h1>
+<a class="link" href="/home">Back to search</a>
+
+{% if results %}
+<p>Number of results: {{ num_results }} </p>
+    <ul>
+    {% for result in results %}
+        <li >
+            <h2 class="custom_title">{{ result.title }}</h2>
+            <p class="custom_teaser" >{{ result.teaser | truncate(200, true)}}</p>
+            <a class="link" href="{{ result.url }}" target="_blank">{{ result.url }}</a>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No results found for "{{ query }}"</p>
+{% endif %}
+
+
+{% endblock %}
