@@ -13,7 +13,7 @@ from nltk.stem import WordNetLemmatizer
 
 # Define the schema for the index
 # The schema specifies the fields you will store and search 
-schema = Schema(url=ID(stored=True), title=TEXT(stored=True), content=TEXT)
+schema = Schema(url=ID(stored=True), title=TEXT(stored=True), content=TEXT(stored=True))
 
 # Create an index in the "indexdir" directory (the directory must already exist!)
 import os
@@ -194,4 +194,5 @@ if __name__ == "__main__":
     print("Search Results:")
     for url, title in result:
         print(f"URL: {url}, Title: {title}")
+
 
