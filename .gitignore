@@ -1,3 +1,29 @@
-__pycache__/
+# Ignore Python bytecode files
 __pycache__/
 *.py[cod]
+
+# Ignore other common files in Python projects
+*.pyo
+*.pyd
+*.db
+*.sqlite
+
+# Ignore virtual environment directories
+venv/
+ENV/
+env/
+*.env
+
+# Ignore IDE or editor specific files
+.vscode/
+.idea/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore the indexdir used by Whoosh for storing search index
+indexdir/
+
+# Ignore log files
+*.log

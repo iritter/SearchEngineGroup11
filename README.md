@@ -1,100 +1,143 @@
-# SearchEngineGroup11
+# Search Engine Project
 
-# 🔎 **Search Engine**  
+Welcome to our Search Engine Project! 🚀
 
-Welcome to our **Search Engine**,  🔎✨  
-You can access the browser via the following url: ""
+This project is a simple, yet powerful search engine built using a combination of web crawling, indexing, and Flask. It enables users to search through the content of a domain that was crawled, with results presented in an intuitive and interactive way. Here's an overview of what we've built and how it works:
 
----
+## 📑 **Table of Contents**
 
-## 📖 **Table of Contents**
-1. [Features](#features)  
-2. [Gameplay Flow](#gameplay-flow)  
-3. [Pages Overview](#pages-overview)  
-4. [Statistics](#statistics)  
-5. [Setup and Installation](#setup-and-installation)  
-4. [Project Structure](#project-structure) 
-7. [Technologies Used](#technologies-used)  
+- [Key Features](#key-features)
+- [How It Works](#how-it-works)
+  - [Home Route](#1-home-route)
+  - [Search Results](#2-search-results)
+  - [Example Flow](#example-flow)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [📂 Project Structure](#project-structure)
+- [🌟 Enjoy the Game!](#-enjoy-the-game)
+- [📝 Attribution](#-attribution)
 
----
+## Key Features
 
-## ⚡ **Features**
----
+1. **Web Crawling**: We crawled a domain to gather web pages and extract their content. This was done with an efficient crawling mechanism that captures all the pages on the website.
 
-## 🎮 **Gameplay Flow**
----
+2. **Indexing with Whoosh**: All the crawled pages are saved to an index directory using **Whoosh**—a fast, feature-rich full-text indexing and searching library in Python. This allows us to store and search the content of the pages quickly.
 
-## 📑 **Pages Overview**
+3. **Flask Web Application**: A simple Flask app was created to make the search functionality accessible via a web interface. The home route lets users search for words or phrases, and the search results are displayed dynamically in a user-friendly way.
 
----
+## How It Works
 
-## 📈 **Scoring and Guessing Quality** 
+### 1. Home Route
 
----
+When you visit the home page (`/home/`), you can enter one or more words in the search box. This is the entry point to your search experience. Simply type your query and click "Search." The application will process the input and send you to the results page.
 
-## 🛠️ **Setup and Installation**
+### 2. Search Results
 
-### Prerequisites
-- Python 3.8 or higher  
-- `pip` for dependency management  
+Once you submit your query, you're redirected to the `/search/` route where the magic happens! Here's what you'll find:
 
-### Installation
-1. Clone the repository:  
-   ```bash
-   git clone <repository-url>
-   cd <repository-name>
-   ```
-2. Install dependencies:  
-   ```bash
-   pip install -r requirements.txt
-   ```
+- **Highlighted Results**: For each page in the results, the title and a teaser of the content will be displayed. The words you searched for will be **highlighted** in bold so you can easily spot their occurrence.
+  
+- **Number of Results**: We show you how many results were found for your search term(s), so you know the scope of the content you're dealing with.
 
-### Running the Application
-Launch the game:  
-```bash
-streamlit run app.py
-```
+- **Clickable Links**: Each result comes with a link to the original page, so you can visit the site directly for more detailed information.
 
----
+### Example Flow
+
+1. You visit the home page and enter a search term, like "Python programming."
+2. After clicking "Search," you are taken to the `/search/` route.
+3. The results show up with the title of each matching page, a snippet of the page containing your search words, and those words are highlighted.
+4. The number of results is displayed at the top, and you can click on any result to view the original page.
+
+## Tech Stack
+
+- **Python**: For the backend logic, crawling, and indexing.
+- **Flask**: A lightweight web framework for handling the search requests and serving the web pages.
+- **Whoosh**: A fast search engine library to index and search the crawled web pages.
+- **HTML/CSS**: For styling the front-end and making the results visually appealing.
+
+## Getting Started
+
+To run this project locally, follow these steps:
+
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/yourusername/search-engine-project.git
+    cd search-engine-project
+    ```
+
+2. Install the necessary dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3. Run the Flask app:
+    ```bash
+    python app.py
+    ```
+
+4. Open your browser and visit `http://127.0.0.1:5000/` to start searching!
+
 ## 📂 **Project Structure**
+
 ```
-SearchEngine/
-│   .gitignore
-│   app.py
-│   README.md
-│   requirements.txt
-│
-├───assets
-│   ├───animations
-│   ├───countries
-│   ├───images
-│   └───songs
-│
-├───styles
-│       style.css
-│
-├───utils
-│       utils.py
-│
-└───views
-    ├───about.py
-    ├───home.py
-    ├───play.py
-    ├───settings.py
-    └───stats.py
+SearchEngineGroup11/
+|   .gitignore
+|   README.md
+|   requirements.txt
+|
++---py
+|       crawlmitindex.py
+|       flaskapp.py
+|
++---static
+|   \---css
+|           highlight.css
+|           styles.css
+|
+\---templates
+        base.html
+        home.html
+        not-found.html
+        search.html
+
 ```
 ---
 
-## 💻 **Technologies Used**
-- **Flask:**   
-- **Crawler:** 
-- **...:**  
-- **Python:** Core programming language for the application logic.  
+## Tech Stack
 
----
+- **Python**: For the backend logic, crawling, and indexing.
+- **Flask**: A lightweight web framework for handling the search requests and serving the web pages.
+- **Whoosh**: A fast search engine library to index and search the crawled web pages.
+- **HTML/CSS**: For styling the front-end and making the results visually appealing.
 
-## 🌟 **Enjoy the Game!**  
+## Getting Started
+
+To run this project locally, follow these steps:
+
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/yourusername/search-engine-project.git
+    cd search-engine-project
+    ```
+
+2. Install the necessary dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3. Run the Flask app:
+    ```bash
+    python app.py
+    ```
+
+4. Open your browser and visit `http://127.0.0.1:5000/` to start searching!
+
+## Conclusion
+
+This project demonstrates the power of combining web crawling, full-text search indexing, and web development to create a simple search engine. It provides an interactive and informative way to explore content on the web, all in a user-friendly format. Whether you're looking for specific information or just browsing, this search engine makes it easy to find exactly what you're looking for.
+
 We hope you enjoyed using our **Search Engine**! 🔎🎉
 
 ### 📝 **Attribution**
+
 Created with ❤️ by Group 11: Johanna, Christina & Isabel.

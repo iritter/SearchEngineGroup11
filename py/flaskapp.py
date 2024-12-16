@@ -2,7 +2,8 @@ from flask import Flask, request, render_template
 from whoosh.index import open_dir
 from whoosh.qparser import QueryParser
 import os
-from urllib.parse import urlparse
+from bs4 import BeautifulSoup
+import requests
 
 # dynamically determine the path to the templates directory
 current_dir = os.path.dirname(os.path.abspath(__file__))  # directory of flaspapp.py
@@ -15,23 +16,13 @@ app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 search_index = open_dir("indexdir")
 
 # home page
-@app.route("/")
-def home1():
-    return render_template('home.html')
-
-# reverse the inputted(?) word
-# @app.route("/reversed")
-# def reversed():
-#     rev = request.args['rev'][::-1]
-#     return render_template('reversed.html', rev=rev)
-
-# home page
-@app.route("/home", methods=['GET'])
+@app.route("/home/", methods=['GET'])
 def home2():
     # render a search fomr
     return render_template('home.html')
+import re
 
-@app.route("/search", methods=['GET'])
+@app.route("/search/", methods=['GET'])
 def search():
     """
     Perform a search query using Whoosh index.
@@ -42,19 +33,81 @@ def search():
 
     # perform the search
     if query:
+        # Your search logic
         with search_index.searcher() as searcher:
             qp = QueryParser("content", search_index.schema)  # Assuming "content" is the field you want to search
             parsed_query = qp.parse(query)
             whoosh_results = searcher.search(parsed_query)
 
             # Collect the URLs 
+            # Collect the URLs and extract the h1 from the page body
             for r in whoosh_results:
                 url = r["url"]
                 title = r["title"]
-                teaser = r["content"]
-                results.append({"url": url, "title": title, "teaser": teaser})
-                
+                content = r["content"]
+
+                # Try to fetch the page and extract <h1> from the body
+                try:
+                    response = requests.get(url)
+                    soup = BeautifulSoup(response.content, 'html.parser')
+
+                    # Find the <body> tag
+                    body = soup.find('body')
+
+                    # Extract the <h1> element within the body
+                    h1 = body.find('h1') if body else None
+
+                    # Get the text from <h1> if it exists, otherwise None
+                    h1_text = h1.get_text() if h1 else None
+
+                except Exception as e:
+                    # Handle exceptions (e.g., network issues or invalid URLs)
+                    print(f"Error fetching {url}: {e}")
+                    h1_text = None
+
+                # Extract the sentence that contains the query word(s)
+                teaser = extract_teaser(content, query)
+    
+                # Highlight query words in the teaser
+                teaser = highlight_query_in_teaser(teaser, query)
+
+                # Exclude title from teaser if present
+                if h1_text:
+                    teaser = teaser.replace(h1_text, "").replace(title, "").strip()
+                else:
+                    teaser = teaser.replace(title, "").strip()
+
+                results.append({"url": url, "title": h1_text, "teaser": teaser})
+
     return render_template('search.html', query=query, results=results)
+
+
+def extract_teaser(content, query):
+    """
+    Extract a sentence that contains the query word(s) to form a teaser.
+    """
+    # Split the content into sentences (you can use regex or any other sentence split method)
+    sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', content)
+
+    # Find the sentence that contains the query word(s)
+    for sentence in sentences:
+        if query in sentence.lower():  # Case-insensitive match for query
+            # Clean up extra spaces and return the sentence with the query
+            return sentence.strip()
+
+    # If no matching sentence is found, return a default teaser or empty string
+    return content[:200].strip()  # Return the first 200 characters of the content as fallback teaser
+
+def highlight_query_in_teaser(teaser, query):
+    """
+    Highlight the query word(s) in the teaser by wrapping them in a span tag with the class 'highlight'.
+    """
+    query_words = query.split()  # Split the query into individual words
+    for word in query_words:
+        # Use a case-insensitive replace to highlight all occurrences of the query words
+        teaser = re.sub(r'(' + re.escape(word) + r')', r'<span class="highlight">\1</span>', teaser, flags=re.IGNORECASE)
+    return teaser
+
 
 @app.errorhandler(404)
 def page_not_found(error):

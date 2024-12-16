@@ -136,13 +136,22 @@ def crawl(initial_url):
             visited.add(url) # mark as visited
             try:
                 response = requests.get(url)
+                # Ensure the response is valid and HTML content
                 if response.status_code == 200 and 'text/html' in response.headers.get('Content-Type', ''):
-                    # create index and extract page content (=soup)
-                    soup = index(url, word_to_urls, url_to_words, all_words)
+                    # Ensure the correct encoding
+                    response.encoding = response.apparent_encoding
 
-                    title = soup.title.string if soup.title else "No title"
-                    content = soup.get_text(separator=' ')  # Get the textual content of the page
+                    # Create the BeautifulSoup object
+                    soup = BeautifulSoup(response.text, 'html.parser')
+
+                    # Extract the title
+                    title = soup.title.string.strip() if soup.title and soup.title.string else "No title"
+                    print(f"Extracted Title: {title}")
+
+                    # Extract the page content
+                    content = soup.get_text(separator=' ', strip=True)
                     
+                    # Add the page to the index
                     add_to_index(writer, url, title, content)
 
                     for link in soup.find_all('a', href=True): # get all links on that page
