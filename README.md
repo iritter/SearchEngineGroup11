@@ -103,38 +103,7 @@ SearchEngineGroup11/
 ```
 ---
 
-## Tech Stack
-
-- **Python**: For the backend logic, crawling, and indexing.
-- **Flask**: A lightweight web framework for handling the search requests and serving the web pages.
-- **Whoosh**: A fast search engine library to index and search the crawled web pages.
-- **HTML/CSS**: For styling the front-end and making the results visually appealing.
-
-## Getting Started
-
-To run this project locally, follow these steps:
-
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/search-engine-project.git
-    cd search-engine-project
-    ```
-
-2. Install the necessary dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3. Run the Flask app:
-    ```bash
-    python app.py
-    ```
-
-4. Open your browser and visit `http://127.0.0.1:5000/` to start searching!
-
-## Conclusion
-
-This project demonstrates the power of combining web crawling, full-text search indexing, and web development to create a simple search engine. It provides an interactive and informative way to explore content on the web, all in a user-friendly format. Whether you're looking for specific information or just browsing, this search engine makes it easy to find exactly what you're looking for.
+## 🌟 **Enjoy the Game!**
 
 We hope you enjoyed using our **Search Engine**! 🔎🎉
 
