@@ -9,14 +9,15 @@ import re
 from collections import defaultdict
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
-
+import os
 
 # Define the schema for the index
 # The schema specifies the fields you will store and search 
-schema = Schema(url=ID(stored=True), title=TEXT(stored=True), content=TEXT(stored=True))
+schema = Schema(url=ID(stored=True), title=TEXT(stored=True), content=TEXT(stored=True), keywords=TEXT(stored=True), description=TEXT(stored=True))
+
 
 # Create an index in the "indexdir" directory (the directory must already exist!)
-import os
+
 if not os.path.exists("indexdir"):
     os.mkdir("indexdir")
 
@@ -27,11 +28,11 @@ writer = ix.writer()
 # Write the index to the disk
 writer.commit()
 
-def add_to_index(writer, url, title, content):
+def add_to_index(writer, url, title, content, keywords, description):
     """
     Add a document to the Whoosh index.
     """
-    writer.add_document(url=url, title=title, content=content)
+    writer.add_document(url=url, title=title, content=content, keywords=keywords, description=description)
 
 
 # perform a search
@@ -151,8 +152,15 @@ def crawl(initial_url):
                     # Extract the page content
                     content = soup.get_text(separator=' ', strip=True)
                     
+                    # earch-specific metadata explicitly defined by the website's creator
+                    keywords_meta = soup.find('meta', {'name': 'keywords'})
+                    keywords = keywords_meta.get('content', "") if keywords_meta else ""
+
+                    description_meta = soup.find('meta', {'name': 'description'})
+                    description = description_meta.get('content', "") if description_meta else ""
+
                     # Add the page to the index
-                    add_to_index(writer, url, title, content)
+                    add_to_index(writer, url, title, content, keywords, description)
 
                     for link in soup.find_all('a', href=True): # get all links on that page
                         absolute_url = urljoin(url, link['href'])

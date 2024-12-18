@@ -33,17 +33,17 @@ def search():
 
     # perform the search
     if query:
-        # Your search logic
         with search_index.searcher() as searcher:
-            qp = QueryParser("content", search_index.schema)  # Assuming "content" is the field you want to search
+            qp = QueryParser("content", search_index.schema)
             parsed_query = qp.parse(query)
             whoosh_results = searcher.search(parsed_query)
 
-            # Collect the URLs 
-            # Collect the URLs and extract the h1 from the page body
+            # Process each result only once
             for r in whoosh_results:
                 url = r["url"]
                 title = r["title"]
+                keywords = r.get("keywords", "No keywords")
+                description = r.get("description", "No description available")
                 content = r["content"]
 
                 # Try to fetch the page and extract <h1> from the body
@@ -53,31 +53,31 @@ def search():
 
                     # Find the <body> tag
                     body = soup.find('body')
-
-                    # Extract the <h1> element within the body
                     h1 = body.find('h1') if body else None
-
-                    # Get the text from <h1> if it exists, otherwise None
                     h1_text = h1.get_text() if h1 else None
 
                 except Exception as e:
-                    # Handle exceptions (e.g., network issues or invalid URLs)
                     print(f"Error fetching {url}: {e}")
                     h1_text = None
 
-                # Extract the sentence that contains the query word(s)
+                # Extract the teaser and highlight query words
                 teaser = extract_teaser(content, query)
-    
-                # Highlight query words in the teaser
                 teaser = highlight_query_in_teaser(teaser, query)
 
-                # Exclude title from teaser if present
+                # Exclude title or h1 from teaser if present
                 if h1_text:
                     teaser = teaser.replace(h1_text, "").replace(title, "").strip()
                 else:
                     teaser = teaser.replace(title, "").strip()
 
-                results.append({"url": url, "title": h1_text, "teaser": teaser})
+                # Append result
+                results.append({
+                    "url": url,
+                    "title": h1_text or title,
+                    "keywords": keywords,
+                    "description": description,
+                    "teaser": teaser,
+                })
 
     return render_template('search.html', query=query, results=results)
 
@@ -115,11 +115,3 @@ def page_not_found(error):
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5500)  # port5500
-
-
-
-
-
-
-
-
