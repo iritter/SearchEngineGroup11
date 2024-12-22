@@ -2,5 +2,4 @@ flask
 whoosh
 requests
 beautifulsoup4
-nltk
 
