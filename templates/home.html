@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<h1>World's Best Search Engine</h1>
-<form action="/search/" method="get">
-    <input class="custom_input" type="text" name="q" placeholder="Enter your query">
-    <button class="custom_button" type="submit">Go</button>
-</form>
+<div class="container">
+    <!-- header image -->
+    <img src="{{ url_for('static', filename='assets/header.png') }}" alt="Header Image" class="header_image">
+    
+    <h1>World's Best Search Engine</h1>
+    <!-- query input -->
+    <form action="/search/" method="get">
+        <input class="custom_input" type="text" name="q" placeholder="What are you searching for?">
+        <button class="custom_button" type="submit">Go</button>
+    </form>
+</div>
 
 {% endblock %}

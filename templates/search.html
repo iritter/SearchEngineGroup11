@@ -1,35 +1,31 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% set num_results = results | length %}
+<div class="container">
+    <!-- calculate number of results -->
+    {% set num_results = results | length %}
+    <h1>Search Results for "{{ query }}"</h1>
+    <a class="link" href="/home/">Back to search</a>
 
-<style>
-    .highlight {
-        font-weight: bold;
-        color: #e74c3c;
-        background-color: yellow;
-        padding: 0 4px;
-        border-radius: 2px;
-    }
-</style>
+    {% if results %}
+    <p>Number of results: {{ num_results }} </p>
+        <ul>
+        {% for result in results %}
+            <li>
+                <!-- Use | safe to render as HTML -->
+                <h2 class="custom_title">{{ result.title | safe}}</h2>
+                <a class="link" href="{{ result.url }}" target="_blank">{{ result.url }}</a>
+                <p class="custom_p">{{ result.teaser | safe }}</p>
+                <p class="custom_p">Description: {{ result.description | safe }}</p>
+                <p class="custom_p">Keywords: {{ result.keywords | safe }}</p>
+                
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No results found for "{{ query }}"</p>
+    {% endif %}
+</div>
 
-<h1>Search Results for "{{ query }}"</h1>
-<a class="link" href="/home/">Back to search</a>
-
-{% if results %}
-<p>Number of results: {{ num_results }} </p>
-    <ul>
-    {% for result in results %}
-        <li>
-            <h2 class="custom_title">{{ result.title }}</h2>
-            <!-- Use | safe to render the teaser as HTML -->
-            <p class="custom_teaser">{{ result.teaser | truncate(200, true) | safe }}</p>
-            <a class="link" href="{{ result.url }}" target="_blank">{{ result.url }}</a>
-        </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No results found for "{{ query }}"</p>
-{% endif %}
 
 {% endblock %}

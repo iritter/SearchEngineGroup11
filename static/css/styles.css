@@ -8,15 +8,26 @@ body {
 }
 
 h1 {
+    width: 100%;
     display: flex;
     justify-content: center;
-    padding: 10px 20px;
+    padding: 10px 0px;
     background-color: dodgerblue;
     color: #fff;
+    border-radius: 16px;
+}
+.container {
+    width: 80vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+}
+.header_image {
     width: 100%;
     border-radius: 16px;
 }
-
 .custom_input {
     padding: 10px;
     width: 300px;
@@ -34,11 +45,16 @@ h1 {
     cursor: pointer;
 }
 
-.custom_title {
-    margin-bottom: 0px;
+ul {
+    list-style-type: none;
+    width: 100%;
 }
 
-.custom_teaser {
+.custom_title {
+    margin-bottom: 6px;
+}
+
+.custom_p {
     margin: 6px 0px 6px 0px;
 }
 
@@ -50,4 +66,12 @@ h1 {
 .link:hover {
     color: darkblue;
     text-decoration: underline;
+}
+
+.highlight {
+    font-weight: bold;
+    color: #e74c3c;
+    background-color: yellow;
+    padding: 0 4px;
+    border-radius: 2px;
 }
