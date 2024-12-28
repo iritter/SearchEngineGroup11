@@ -110,50 +110,58 @@ def process_query(query):
 
 def extract_teaser(content, stemmed_query, h1_text, title):
     """
-    Extracts a teaser from the content based on the query words
-    Param:
-        content (str): The text content to search for teaser sentences
-        stemmed_query (list): A list of stemmed query words
-        h1_text (str): The H1 text of the document
-        title (str): The title of the document
-    Returns:
-        str: A teaser string containing sentences with the query words or a fallback teaser
+    Extracts a teaser containing a few words before and after the query words
+    with query words highlighted.
 
+    Param:
+        content (str): The text content to search for teaser snippets.
+        stemmed_query (list): A list of stemmed query words.
+        h1_text (str): The H1 text of the document.
+        title (str): The title of the document.
+
+    Returns:
+        str: A teaser string containing snippets with the query words.
     """
     search_words = stemmed_query
-    remaining_words = set(search_words)
-
-    # Split the content into sentences with regex
-    sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', content)
     teaser = []
 
-    # make sure that every query word appears in teaser
-    while remaining_words:
-        for word in list(remaining_words):
-            # Find the sentence that contains the query word
-            for sentence in sentences:
-                if word in sentence.lower():  # Case-insensitive match for query
-                    teaser.append(sentence.strip())
-                    # remove words that are covered in teaser so far
-                    remaining_words -= set(w for w in search_words if w in sentence.lower())
-                    break
-            break
+    # Define the number of words before and after the match
+    context_size = 30
 
-        # if all query words are covered
-        if not remaining_words:
-            break
 
-    if teaser:
-        # Join collected sentences with " ... "
-        teaser_complete = " ... ".join(teaser).strip()
-    else:
-        teaser_complete = content[:200].strip()  # Return the first 200 characters of the content as fallback teaser
-    # cut title from teaser
+    # Split content into words
+    words = content.split()
+
+    for word in search_words:
+        for i, current_word in enumerate(words):
+            if word in current_word.lower():
+                # Extract context around the query word
+                start_idx = max(0, i - context_size)
+                end_idx = min(len(words), i + context_size + 1)
+                snippet = " ".join(words[start_idx:end_idx])
+                teaser.append(snippet)
+                break  # Avoid duplicating snippets for the same word
+
+    # Combine all snippets into a single teaser
+    teaser_complete = " ... ".join(teaser)
+
+    # Highlight the search words in the teaser
+    for word in search_words:
+        teaser_complete = re.sub(
+            rf"(\b{re.escape(word)}\b)",
+            r'<span class="highlight">\1</span>',
+            teaser_complete,
+            flags=re.IGNORECASE
+        )
+
+    # Remove title or h1 text from the teaser
     if h1_text:
-        teaser_complete = teaser_complete.replace(h1_text, "").replace(title, "").strip()
+        teaser_complete = teaser_complete.replace(h1_text, "").strip()
     else:
         teaser_complete = teaser_complete.replace(title, "").strip()
-    return teaser_complete + " ... "
+
+    return teaser_complete + " ..."
+
 
 
 def highlight_query_words(title, teaser, original_query, stemmed_query):
