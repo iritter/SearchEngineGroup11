@@ -23,7 +23,7 @@ env/
 Thumbs.db
 
 # Ignore the indexdir used by Whoosh for storing search index
-indexdir/_MAIN_2.toc
+indexdir/
 
 # Ignore log files
 *.log
