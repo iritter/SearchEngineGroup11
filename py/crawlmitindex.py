@@ -13,7 +13,7 @@ stem_ana = StemmingAnalyzer()
 # Schema for the index, specifies the fields, the analyzer and field_boost (weight)
 schema = Schema(
     url=ID(stored=True), 
-    title=TEXT(analyzer=stem_ana, stored=True, field_boost=2.5),
+    title=TEXT(zanalyzer=stem_ana, stored=True, field_boost=2.5),
     h1_text=TEXT(analyzer=stem_ana, stored=True, field_boost=3.0),
     content=TEXT(analyzer=stem_ana, stored=True, field_boost=2.0), 
     keywords=KEYWORD(analyzer=stem_ana, stored=True, field_boost=1.0), 
