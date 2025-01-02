@@ -2,4 +2,3 @@ flask
 whoosh
 requests
 beautifulsoup4
-
