@@ -5,7 +5,7 @@
     <!-- calculate number of results -->
     {% set num_results = results | length %}
     <h1>Search Results for "{{ query }}"</h1>
-    <a class="link" href="/home/">Back to search</a>
+    <a class="link" href="{{ url_for('home') }}">Back to search</a>
 
     {% if results %}
     <p>Number of results: {{ num_results }} </p>

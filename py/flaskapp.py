@@ -9,11 +9,12 @@ import re
 current_dir = os.path.dirname(os.path.abspath(__file__))  # directory of flaskapp.py
 template_dir = os.path.join(current_dir, "../templates")  # navigate to templates folder
 static_dir = os.path.join(current_dir, "../static") # navigate to static folder
+index_dir = os.path.join(current_dir, "../indexdir") # navigate to index
 
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 
 # Open the Whoosh index
-search_index = open_dir("indexdir")
+search_index = open_dir(index_dir)
 
 # Whoosh StemmingAnalyzer 
 stem_ana = StemmingAnalyzer()

@@ -7,13 +7,16 @@ from urllib.parse import urljoin, urlparse
 import logging
 import os
 
+current_dir = os.path.dirname(os.path.abspath(__file__)) 
+index_dir = os.path.join(current_dir, "../indexdir") # navigate to index
+
 # Whoosh StemmingAnalyzer 
 stem_ana = StemmingAnalyzer()
 
 # Schema for the index, specifies the fields, the analyzer and field_boost (weight)
 schema = Schema(
     url=ID(stored=True), 
-    title=TEXT(zanalyzer=stem_ana, stored=True, field_boost=2.5),
+    title=TEXT(analyzer=stem_ana, stored=True, field_boost=2.5),
     h1_text=TEXT(analyzer=stem_ana, stored=True, field_boost=3.0),
     content=TEXT(analyzer=stem_ana, stored=True, field_boost=2.0), 
     keywords=KEYWORD(analyzer=stem_ana, stored=True, field_boost=1.0), 
@@ -21,11 +24,11 @@ schema = Schema(
 )
 
 # Create an index in the "indexdir" directory (the directory must already exist!)
-if not os.path.exists("indexdir"):
-    os.mkdir("indexdir")
+if not os.path.exists(index_dir):
+    os.mkdir(index_dir)
 
 # Create the index
-ix = create_in("indexdir", schema)
+ix = create_in(index_dir, schema)
 writer = ix.writer()
 
 # Write the index to the disk
