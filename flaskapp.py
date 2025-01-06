@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, send_from_directory, url_for
 from whoosh.index import open_dir
 from whoosh.qparser import QueryParser
 from whoosh.analysis import StemmingAnalyzer
@@ -7,31 +7,32 @@ import re
 
 # dynamically determine the path to the templates directory
 current_dir = os.path.dirname(os.path.abspath(__file__))  # directory of flaskapp.py
-template_dir = os.path.join(current_dir, "../templates")  # navigate to templates folder
-static_dir = os.path.join(current_dir, "../static") # navigate to static folder
-index_dir = os.path.join(current_dir, "../indexdir") # navigate to index
+template_dir = os.path.join(current_dir, "templates")  # navigate to templates folder
+static_dir = os.path.join(current_dir, "static") # navigate to static folder
+index_dir = os.path.join(current_dir, "indexdir") # navigate to index
 
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
-
-# Open the Whoosh index
-search_index = open_dir(index_dir)
 
 # Whoosh StemmingAnalyzer 
 stem_ana = StemmingAnalyzer()
 
+# Open the Whoosh index
+search_index = open_dir(index_dir)
+
 # home page
-@app.route("/home/", methods=['GET'])
+@app.route('/home/', methods=['GET'])
 def home():
     # render a search fomr
     return render_template('home.html')
 
 # fallback to home page
-@app.route("/", methods=['GET'])
+@app.route('/', methods=['GET'])
 def home2():
     return render_template('home.html')
 
+
 # search page to show results
-@app.route("/search/", methods=['GET'])
+@app.route('/search/', methods=['GET'])
 def search():
     """
     Handling of search requests.
@@ -204,4 +205,4 @@ def page_not_found(error):
     return render_template('not-found.html'), 404
 
 if __name__ == "__main__":
-    app.run()  
+    app.run(host="0.0.0.0", port=5500)  

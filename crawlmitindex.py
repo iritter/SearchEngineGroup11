@@ -8,7 +8,7 @@ import logging
 import os
 
 current_dir = os.path.dirname(os.path.abspath(__file__)) 
-index_dir = os.path.join(current_dir, "../indexdir") # navigate to index
+index_dir = os.path.join(current_dir, "indexdir") # navigate to index
 
 # Whoosh StemmingAnalyzer 
 stem_ana = StemmingAnalyzer()
