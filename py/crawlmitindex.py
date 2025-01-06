@@ -134,7 +134,6 @@ def crawl(initial_url):
 if __name__ == "__main__":
     # url to be crawled
     initial_url = 'https://vm009.rz.uos.de/crawl/index.html'
-    #initial_url = 'https://www.ikw.uni-osnabrueck.de/en/home.html'
 
     # start crawling
     crawl(initial_url)
