@@ -79,24 +79,27 @@ To run this project locally, follow these steps:
 
 3. Run the Flask app:
     ```bash
-    python app.py
+    python flaskapp.py
     ```
 
 4. Open your browser and visit `http://127.0.0.1:5500/` to start searching!
+
+5. Run the Crawler:
+    ```bash
+    python crawlmitindex.py
+    ```
 
 ## 📂 **Project Structure**
 
 ```
 SearchEngineGroup11/
 |   .gitignore
+|   crawlmitindex.py
+|   flaskapp.py
 |   README.md
 |   requirements.txt
 |
 +---indexdir
-|
-+---py
-|       crawlmitindex.py
-|       flaskapp.py
 |
 +---static
 |   \---css
