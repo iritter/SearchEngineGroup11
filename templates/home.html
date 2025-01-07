@@ -7,7 +7,7 @@
     
     <h1>World's Best Search Engine</h1>
     <!-- query input -->
-    <form action="/search/" method="get">
+    <form action="{{ url_for("search") }}" method="get">
         <input class="custom_input" type="text" name="q" placeholder="What are you searching for?">
         <button class="custom_button" type="submit">Go</button>
     </form>
